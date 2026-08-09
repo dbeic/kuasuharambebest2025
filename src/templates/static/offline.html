@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}Offline - HARAMBEE CASH{% endblock %}
+
+{% block content %}
+<div class="card" style="text-align: center;">
+    <div style="font-size: 4rem; animation: bounce 0.5s ease-out;">📡</div>
+    <h1 style="color: var(--text-gold); margin: 20px 0;">You're Offline</h1>
+    <p style="margin: 20px 0;">It looks like you don't have an internet connection.</p>
+    <p>Try these while you wait:</p>
+    <div style="display: flex; gap: 10px; justify-content: center; margin-top: 20px; flex-wrap: wrap;">
+        <button class="cta-button" onclick="startTriviaGame()" style="background: var(--gold-gradient);">🎮 Play Trivia</button>
+        <button class="cta-button" onclick="showGamingTips()" style="background: rgba(255,215,0,0.2);">📚 Gaming Tips</button>
+    </div>
+    <p style="margin-top: 30px; color: var(--text-muted);">Check your connection and try again.</p>
+</div>
+
+<script>
+    function startTriviaGame() {
+        const content = document.querySelector('.container');
+        if (content) {
+            content.innerHTML = '<div class="card"><h3>Trivia Game</h3><div id="trivia-content">Loading...</div></div>';
+            // Simplified trivia for offline
+            document.getElementById('trivia-content').innerHTML = `
+                <p>Question: What is the minimum play amount?</p>
+                <button class="cta-button" style="margin:5px">Ksh. 1</button>
+                <button class="cta-button" style="margin:5px">Ksh. 5</button>
+                <button class="cta-button" style="margin:5px">Ksh. 10</button>
+            `;
+        }
+    }
+    
+    function showGamingTips() {
+        const content = document.querySelector('.container');
+        if (content) {
+            content.innerHTML = '<div class="card"><h3>Gaming Tips</h3><ul><li>Set a budget before playing</li><li>Take regular breaks</li><li>Never chase losses</li><li>Play for fun, not income</li></ul></div>';
+        }
+    }
+</script>
+{% endblock %}

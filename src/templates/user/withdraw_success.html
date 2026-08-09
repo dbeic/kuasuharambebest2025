@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+{% block title %}Withdrawal Submitted - HARAMBEE CASH{% endblock %}
+
+{% block content %}
+<div class="card animate-fade-in-up" style="position:relative; overflow:hidden; text-align:center;">
+    <div style="position:absolute; top:0; left:0; right:0; height:3px; background:linear-gradient(90deg, transparent, #4CAF50, transparent); animation: shimmer 3s linear infinite; background-size:200% auto;"></div>
+    
+    <div style="display:flex; flex-direction:column; align-items:center; padding:20px 0;">
+        <div style="width:80px; height:80px; background:linear-gradient(135deg, #4CAF50, #388E3C); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:40px; color:white; margin-bottom:20px; animation: bounceIn 0.6s ease-out; box-shadow:0 8px 30px rgba(76,175,80,0.3);">
+            ✓
+        </div>
+        
+        <h2 style="color: var(--text-gold); font-size:1.8rem; margin-bottom:8px;">Withdrawal Request Submitted! 🎉</h2>
+        <p style="color: var(--text-muted); font-size:1rem; margin-bottom:25px;">Your request has been added to the withdrawal queue</p>
+    </div>
+
+    <!-- Amount Display -->
+    <div style="margin: 0 0 25px 0; padding: 20px; background: linear-gradient(135deg, rgba(255,215,0,0.06), rgba(255,215,0,0.02)); border-radius: 14px; border: 1px solid rgba(255,215,0,0.08);">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+            <span style="color: var(--text-muted); font-size:0.95rem;">💰 Amount Requested:</span>
+            <span style="font-size: 2rem; font-weight: 700; color: var(--text-gold);">
+                KES {{ amount|float|round(2) }}
+            </span>
+        </div>
+    </div>
+
+    <!-- Queue Information -->
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 0 0 20px 0;">
+        <div style="padding: 15px; background: rgba(255,255,255,0.02); border-radius: 12px; border: 1px solid rgba(255,255,255,0.04);">
+            <div style="color: var(--text-muted); font-size:0.8rem; text-transform:uppercase; letter-spacing:0.5px;">Queue Position</div>
+            <div style="font-size:1.8rem; font-weight:700; color:#4CAF50;">#{{ queue_position }}</div>
+        </div>
+        <div style="padding: 15px; background: rgba(255,255,255,0.02); border-radius: 12px; border: 1px solid rgba(255,255,255,0.04);">
+            <div style="color: var(--text-muted); font-size:0.8rem; text-transform:uppercase; letter-spacing:0.5px;">Estimated Payment</div>
+            <div style="font-size:1.2rem; font-weight:700; color:#FFD700;">{{ estimated_payment }}</div>
+        </div>
+    </div>
+
+    <!-- Info Alert -->
+    <div style="margin: 0 0 20px 0; padding: 16px 20px; background: rgba(255,215,0,0.04); border-radius: 12px; border-left: 4px solid #FFD700; text-align:left;">
+        <div style="display:flex; align-items:flex-start; gap:12px;">
+            <span style="font-size:1.5rem;">⏳</span>
+            <div>
+                <strong style="color: var(--text-gold); display:block; margin-bottom:4px;">Your withdrawal is now in the queue.</strong>
+                <span style="color: var(--text-muted); font-size:0.9rem;">You will be notified when funds are available and processed. Priority is given to real money depositors first.</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- What Happens Next -->
+    <div style="margin: 0 0 25px 0; padding: 18px; background: rgba(255,255,255,0.02); border-radius: 12px; border: 1px solid rgba(255,255,255,0.04); text-align:left;">
+        <h4 style="color: var(--text-gold); font-size:0.95rem; margin-bottom:10px;">💡 What Happens Next?</h4>
+        <ul style="color: var(--text-muted); font-size:0.85rem; list-style: none; padding: 0; margin: 0;">
+            <li style="padding: 6px 0; display:flex; align-items:center; gap:10px;">⏳ Your request is queued based on priority</li>
+            <li style="padding: 6px 0; display:flex; align-items:center; gap:10px;">💰 Real money depositors are processed first</li>
+            <li style="padding: 6px 0; display:flex; align-items:center; gap:10px;">📧 You'll be notified when processing begins</li>
+            <li style="padding: 6px 0; display:flex; align-items:center; gap:10px;">🏦 Funds will be sent to your registered account</li>
+        </ul>
+    </div>
+
+    <!-- Action Buttons -->
+    <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
+        <a href="{{ url_for('game.index') }}" class="btn btn-primary" style="display:inline-block; padding:12px 35px; border-radius:12px; background:linear-gradient(135deg, #2196F3, #1976D2); color:white; border:none; transition:all 0.3s ease; text-decoration:none; font-weight:600;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 30px rgba(33,150,243,0.3)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">← Back to Game</a>
+        <a href="{{ url_for('wallet.withdraw') }}" class="btn btn-secondary" style="display:inline-block; padding:12px 35px; border-radius:12px; background:rgba(255,215,0,0.08); color:var(--text-gold); border:1px solid rgba(255,215,0,0.1); transition:all 0.3s ease; text-decoration:none; font-weight:600;" onmouseover="this.style.background='rgba(255,215,0,0.15)'" onmouseout="this.style.background='rgba(255,215,0,0.08)'">📋 Make Another</a>
+    </div>
+
+    <!-- Footer -->
+    <div style="margin-top: 25px; font-size:0.85rem; color: var(--text-muted);">
+        <span>📞 Need help? Contact support</span>
+    </div>
+</div>
+
+<style>
+    @keyframes shimmer {
+        0% { background-position: -200% center; }
+        100% { background-position: 200% center; }
+    }
+    @keyframes bounceIn {
+        0% { transform: scale(0.3); opacity: 0; }
+        50% { transform: scale(1.05); }
+        70% { transform: scale(0.9); }
+        100% { transform: scale(1); opacity: 1; }
+    }
+    @keyframes fadeInUp {
+        from { transform: translateY(20px); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
+    }
+    .animate-fade-in-up {
+        animation: fadeInUp 0.5s ease-out forwards;
+    }
+</style>
+{% endblock %}

@@ -1,0 +1,246 @@
+{% extends "admin/base_admin.html" %}
+
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block content %}
+<div class="stats-dashboard">
+    <div class="stat-card">
+        <div class="stat-label">Total Users</div>
+        <div class="stat-value">{{ users|length|default(0) }}</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-label">Platform Balance</div>
+        <div class="stat-value">KES {{ "%.2f"|format(total_balance|default(0)) }}</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-label">Active Games</div>
+        <div class="stat-value">{{ active_games|default(0) }}</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-label">Completed Games</div>
+        <div class="stat-value">{{ completed_games|default(0) }}</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-label">Total Platform Fees</div>
+        <div class="stat-value">KES {{ "%.2f"|format(total_profit|default(0)) }}</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-label">Queued Players</div>
+        <div class="stat-value">{{ game_queue_count|default(0) }} / 10</div>
+        <div class="stat-label" style="font-size:0.8rem; margin-top:5px;">
+            Need {{ 10 - game_queue_count|default(0) }} more players
+        </div>
+    </div>
+</div>
+
+<div class="action-buttons">
+    <a href="{{ url_for('admin.withdrawals') }}" class="action-btn">
+        <i class="fas fa-money-bill-wave"></i> Withdrawals
+    </a>
+    <a href="{{ url_for('admin.cashbook') }}" class="action-btn">
+        <i class="fas fa-book"></i> Cashbook
+    </a>
+    <a href="{{ url_for('admin.reconcile') }}" class="action-btn">
+        <i class="fas fa-balance-scale"></i> Reconcile
+    </a>
+    <a href="{{ url_for('admin.visitor_log') }}" class="action-btn">
+        <i class="fas fa-users"></i> Visitor Log
+    </a>
+</div>
+
+<div class="main-content">
+    <div class="content-tabs">
+        <button class="tab-btn active" onclick="showTab('users')">
+            <i class="fas fa-users"></i> Users
+        </button>
+        <button class="tab-btn" onclick="showTab('activity')">
+            <i class="fas fa-history"></i> Activity Logs
+        </button>
+        <button class="tab-btn" onclick="showTab('allowed')">
+            <i class="fas fa-check-circle"></i> Allowed Users
+        </button>
+        <button class="tab-btn" onclick="showTab('wallet')">
+            <i class="fas fa-wallet"></i> Wallet Management
+        </button>
+    </div>
+
+    <!-- Users Tab -->
+    <div id="tab-users" class="tab-content active">
+        <h3><i class="fas fa-users"></i> Registered Users</h3>
+        <div style="overflow-x:auto;">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Username</th>
+                        <th>Email</th>
+                        <th>Wallet Balance</th>
+                        <th>Suspended</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                    <tr>
+                        <td>{{ user[0] }}</td>
+                        <td>{{ user[2] }}</td>
+                        <td>{{ user[1] }}</td>
+                        <td>KES {{ "%.2f"|format(user[4]|float|default(0)) }}</td>
+                        <td>
+                            {% if user_suspensions.get(user[0]) %}
+                                <span style="color: #FF6B35;">⚠️ Suspended</span>
+                            {% else %}
+                                <span style="color: #4CAF50;">✅ Active</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Activity Logs Tab -->
+    <div id="tab-activity" class="tab-content">
+        <h3><i class="fas fa-history"></i> Recent User Activity</h3>
+        <div style="overflow-x:auto; max-height:400px; overflow-y:auto;">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Time</th>
+                        <th>Username</th>
+                        <th>IP Address</th>
+                        <th>Path</th>
+                        <th>Method</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for log in logs %}
+                    <tr>
+                        <td>{{ log[1].strftime('%Y-%m-%d %H:%M:%S') if log[1] else 'N/A' }}</td>
+                        <td>{{ log[2] or 'Guest' }}</td>
+                        <td>{{ log[3] or 'N/A' }}</td>
+                        <td>{{ log[4] or 'N/A' }}</td>
+                        <td>{{ log[5] or 'N/A' }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Allowed Users Tab -->
+    <div id="tab-allowed" class="tab-content">
+        <h3><i class="fas fa-check-circle"></i> Allowed Users</h3>
+        <div class="form-section">
+            <form method="POST" action="{{ url_for('admin.add_allowed_user') }}">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="allowed_username">Add Allowed Username</label>
+                        <input type="text" id="allowed_username" name="allowed_username" placeholder="Enter username" required>
+                    </div>
+                    <div class="form-group" style="display:flex; align-items:flex-end;">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-plus"></i> Add User
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div style="overflow-x:auto;">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Username</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in allowed_users %}
+                    <tr>
+                        <td>{{ user[0] }}</td>
+                        <td>
+                            <form method="POST" action="{{ url_for('admin.remove_allowed_user') }}" style="display:inline;">
+                                <input type="hidden" name="username" value="{{ user[0] }}">
+                                <button type="submit" class="btn" style="background:#f44336; color:white; padding:5px 10px; font-size:0.8rem;">
+                                    <i class="fas fa-trash"></i> Remove
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Wallet Management Tab -->
+    <div id="tab-wallet" class="tab-content">
+        <h3><i class="fas fa-wallet"></i> Wallet Management</h3>
+        <div class="form-section">
+            <form method="POST" action="{{ url_for('admin.update_wallet') }}">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="user_id">User ID</label>
+                        <input type="number" id="user_id" name="user_id" placeholder="Enter user ID" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="amount">Amount (KES)</label>
+                        <input type="number" id="amount" name="amount" placeholder="Enter amount" step="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="action">Action</label>
+                        <select id="action" name="action" required>
+                            <option value="deposit">Deposit</option>
+                            <option value="withdraw">Withdraw</option>
+                        </select>
+                    </div>
+                    <div class="form-group" style="display:flex; align-items:flex-end;">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-arrow-right"></i> Process
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="alert alert-info">
+            <i class="fas fa-info-circle"></i> 
+            <strong>Note:</strong> Deposits add funds to user wallets. Withdrawals deduct funds from user wallets.
+        </div>
+    </div>
+</div>
+
+<script>
+    function showTab(tabName) {
+        // Hide all tabs
+        document.querySelectorAll('.tab-content').forEach(tab => {
+            tab.classList.remove('active');
+        });
+        // Remove active class from all buttons
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        // Show selected tab
+        document.getElementById('tab-' + tabName).classList.add('active');
+        // Add active class to clicked button
+        event.target.closest('.tab-btn').classList.add('active');
+    }
+
+    // Auto-refresh queue count every 5 seconds
+    setInterval(function() {
+        fetch('{{ url_for("api.queue_status") }}')
+            .then(response => response.json())
+            .then(data => {
+                const queueStat = document.querySelector('.stat-card:last-child .stat-value');
+                if (queueStat) {
+                    queueStat.textContent = data.queue_count + ' / 10';
+                }
+                const needText = document.querySelector('.stat-card:last-child .stat-label:last-child');
+                if (needText) {
+                    needText.textContent = 'Need ' + data.players_needed + ' more players';
+                }
+            })
+            .catch(error => console.error('Error refreshing queue:', error));
+    }, 5000);
+</script>
+
+{% endblock %}

@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block title %}Login - HARAMBEE CASH{% endblock %}
+
+{% block content %}
+<div class="card" style="max-width: 400px; margin: 40px auto;">
+    <h2 style="color: var(--text-gold); margin-bottom: 24px; text-align: center;">Login to Your Account</h2>
+    
+    {% if error %}
+    <div style="background: rgba(255,107,53,0.1); border-left: 4px solid var(--error); padding: 12px; margin-bottom: 20px; border-radius: 4px;">
+        {{ error }}
+    </div>
+    {% endif %}
+    
+    <form method="POST" action="{{ url_for('auth.login') }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        
+        <div style="margin-bottom: 20px;">
+            <label style="display: block; margin-bottom: 8px; color: var(--text-muted);">Username</label>
+            <input type="text" name="username" required 
+                   style="width: 100%; padding: 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,215,0,0.2); border-radius: 8px; color: white;">
+        </div>
+        
+        <div style="margin-bottom: 24px;">
+            <label style="display: block; margin-bottom: 8px; color: var(--text-muted);">Password</label>
+            <input type="password" name="password" required 
+                   style="width: 100%; padding: 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,215,0,0.2); border-radius: 8px; color: white;">
+        </div>
+        
+        <button type="submit" class="cta-button" style="width: 100%; justify-content: center; padding: 14px;">
+            Login
+        </button>
+    </form>
+    
+    <p style="text-align: center; margin-top: 20px; color: var(--text-muted);">
+        Don't have an account? <a href="{{ url_for('auth.register') }}" style="color: var(--text-gold);">Register</a>
+    </p>
+</div>
+{% endblock %}

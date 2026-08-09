@@ -1,0 +1,23 @@
+services:
+  - type: web
+    name: harambee-cash
+    runtime: python3
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn --bind 0.0.0.0:$PORT --workers 2 --threads 2 --timeout 120 wsgi:application
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.0
+      - key: FLASK_ENV
+        value: production
+      - key: SESSION_COOKIE_SECURE
+        value: true
+      - key: CASH_DATABASE
+        sync: false
+      - key: CASH_USERNAME
+        sync: false
+      - key: CASH_PASSWORD
+        sync: false
+      - key: SECRET_KEY
+        sync: false
+      - key: ADMIN_API_KEY
+        sync: false

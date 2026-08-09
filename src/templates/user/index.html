@@ -1,0 +1,784 @@
+{% extends "base.html" %}
+
+{% block title %}HARAMBEE CASH - Play & Win Big!{% endblock %}
+{% block content %}
+{% if not session.get('user_id') %}
+    <!-- Guest View -->
+    <div class="card animate-fade-in-up">
+        <h2 style="color: var(--text-gold); font-size: 1.8rem; text-align: center; animation: glow 2s ease-in-out infinite;">Welcome to HARAMBEE CASH!</h2>
+        <p style="color: var(--text-muted); margin-top: 10px; text-align: center; font-size: 1.1rem;">Play exciting games and win real cash prizes instantly.</p>
+    </div>
+
+    <div style="margin-top:18px; text-align:left; color:var(--text-muted);">
+        <h3 style="color:var(--text-gold); font-size:1.2rem; margin-bottom:12px;">How to Play</h3>
+        <ul style="margin-top:10px; list-style:none; padding:0;">
+            <li style="padding:10px 0; border-bottom:1px solid rgba(255,255,255,0.05); display:flex; align-items:center; gap:12px; transition: all 0.3s ease;">
+                <span style="background:rgba(255,215,0,0.1); color:var(--text-gold); width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:700;">1</span>
+                <span>Create your free account</span>
+            </li>
+            <li style="padding:10px 0; border-bottom:1px solid rgba(255,255,255,0.05); display:flex; align-items:center; gap:12px; transition: all 0.3s ease;">
+                <span style="background:rgba(255,215,0,0.1); color:var(--text-gold); width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:700;">2</span>
+                <span>Login to access games</span>
+            </li>
+            <li style="padding:10px 0; border-bottom:1px solid rgba(255,255,255,0.05); display:flex; align-items:center; gap:12px; transition: all 0.3s ease;">
+                <span style="background:rgba(255,215,0,0.1); color:var(--text-gold); width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:700;">3</span>
+                <span>Play with just <strong style="color:var(--text-gold);">Ksh. 10.00</strong> per round</span>
+            </li>
+            <li style="padding:10px 0; display:flex; align-items:center; gap:12px; transition: all 0.3s ease;">
+                <span style="background:rgba(255,215,0,0.1); color:var(--text-gold); width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:700;">4</span>
+                <span>Win exciting cash prizes <strong style="color:#4CAF50;">instantly!</strong></span>
+            </li>
+        </ul>
+    </div>
+
+    <div class="features-grid">
+        <div class="feature-card animate-fade-in-up" style="animation-delay:0.05s;">
+            <div style="font-size:2.5rem; margin-bottom:6px;">💰</div>
+            <div style="font-weight:700; margin-top:8px; color:var(--text-gold); font-size:1rem;">Win Real Cash</div>
+            <div style="color:var(--text-muted); margin-top:6px; font-size:0.85rem;">Play with Ksh. 10.00 and win cash prizes</div>
+        </div>
+        <div class="feature-card animate-fade-in-up" style="animation-delay:0.1s;">
+            <div style="font-size:2.5rem; margin-bottom:6px;">⚡</div>
+            <div style="font-weight:700; margin-top:8px; color:var(--text-gold); font-size:1rem;">Fast Games</div>
+            <div style="color:var(--text-muted); margin-top:6px; font-size:0.85rem;">New games every 30 seconds</div>
+        </div>
+        <div class="feature-card animate-fade-in-up" style="animation-delay:0.15s;">
+            <div style="font-size:2.5rem; margin-bottom:6px;">🛡️</div>
+            <div style="font-weight:700; margin-top:8px; color:var(--text-gold); font-size:1rem;">Secure & Fair</div>
+            <div style="color:var(--text-muted); margin-top:6px; font-size:0.85rem;">Advanced security with fair gameplay</div>
+        </div>
+        <div class="feature-card animate-fade-in-up" style="animation-delay:0.2s;">
+            <div style="font-size:2.5rem; margin-bottom:6px;">🏆</div>
+            <div style="font-weight:700; margin-top:8px; color:var(--text-gold); font-size:1rem;">Community</div>
+            <div style="color:var(--text-muted); margin-top:6px; font-size:0.85rem;">Join thousands of players</div>
+        </div>
+    </div>
+
+{% else %}
+    <!-- Logged-in View -->
+    <div style="text-align:center; margin-bottom:14px;">
+        <p style="font-size:1.2rem; color:var(--text-gold); font-weight:700; animation: fadeInUp 0.6s ease-out; display:flex; align-items:center; justify-content:center; gap:8px;">
+            <span style="animation: float 3s ease-in-out infinite;">👋</span>
+            Welcome back, {{ session.get('username') }}!
+            <span style="font-size:0.9rem; color:var(--text-muted); font-weight:400; margin-left:4px;">🎮</span>
+        </p>
+    </div>
+
+    <div class="card game-window animate-fade-in-up" style="position:relative; overflow:hidden;">
+        <div style="position:absolute; top:0; left:0; right:0; height:2px; background:linear-gradient(90deg, transparent, var(--text-gold), transparent); animation: shimmer 3s linear infinite; background-size:200% auto;"></div>
+        <h2 style="display:flex; align-items:center; gap:10px; font-size:1.2rem;">
+            🎮 Game Status
+            <span id="liveIndicator" class="live-indicator" style="display:none;"></span>
+            <span id="statusText" style="font-size:0.8rem; color:var(--text-muted);"></span>
+        </h2>
+
+        <div class="game-status-grid">
+            <div class="status-item animate-fade-in-up" style="animation-delay:0.05s;">
+                <div class="label">⏱️ Next Game</div>
+                <div class="value" id="nextGameDisplay" style="color:var(--text-gold);">Loading...</div>
+            </div>
+            <div class="status-item animate-fade-in-up" style="animation-delay:0.1s;">
+                <div class="label">👥 Players in Queue</div>
+                <div class="value" id="playerCountDisplay" style="color:#4CAF50;">0</div>
+            </div>
+            <div class="status-item animate-fade-in-up" style="animation-delay:0.15s;">
+                <div class="label">⏳ Time to Game</div>
+                <div class="value" id="countdownDisplay" style="color:var(--text-gold);">--</div>
+            </div>
+            <div class="status-item animate-fade-in-up" style="animation-delay:0.2s;">
+                <div class="label">📊 Game Status</div>
+                <div class="value" id="gameStatusDisplay" style="font-size:1rem; color:var(--text-muted);">Waiting</div>
+            </div>
+        </div>
+
+        <div style="margin-top:12px; padding:14px; background:rgba(255,255,255,0.02); border-radius:10px; text-align:center; font-size:0.9rem; color:var(--text-muted); border:1px dashed rgba(255,255,255,0.06);">
+            💡 Need at least <strong style="color:var(--text-gold);">2 players</strong> for a game to start
+        </div>
+
+        <div style="margin-top:12px; text-align:center;">
+            <button id="playButton" class="btn btn-primary" style="padding:14px 40px; font-size:1.1rem; font-weight:700; letter-spacing:0.5px; border-radius:50px; background:linear-gradient(135deg, #D4AF37, #FFD700); color:#1a1a2e; border:none; cursor:pointer; transition:all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); box-shadow:0 4px 20px rgba(212,175,55,0.3);" onclick="window.enqueuePlayer()">
+                🎮 PLAY NOW
+            </button>
+        </div>
+    </div>
+
+    <!-- Recent Games -->
+    <div class="card animate-fade-in-up" style="animation-delay:0.1s;">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+            <h3 style="color:var(--text-gold); font-size:1.1rem; display:flex; align-items:center; gap:8px;">
+                📊 Recent Games
+                <span style="font-size:0.7rem; color:var(--text-muted); font-weight:400;">(Last 100)</span>
+            </h3>
+            <span style="color:var(--text-muted); font-size:0.8rem;" id="resultCount">Loading...</span>
+        </div>
+        <div id="gameResults" class="results-scroll" style="margin-top:15px;">
+            <div style="text-align:center; color:var(--text-muted); padding:30px; animation: pulse 1.5s ease-in-out infinite;">Loading game history...</div>
+        </div>
+    </div>
+{% endif %}
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    // ============================================================
+    // GAME STATUS UPDATER
+    // ============================================================
+    class GameStatusUpdater {
+        constructor() {
+            this.eventSource = null;
+            this.gameStartTime = null;
+            this.countdownInterval = null;
+            this.queuedPlayers = 0;
+            this.isGameLive = false;
+            this.lastGameCode = null;
+            this.reconnectAttempts = 0;
+            this.maxReconnectAttempts = 10;
+            this.gameResultsCache = [];
+            this.resultsInitialized = false;
+            this.nextGameTime = null;
+            this.currentUsername = '{{ session.get("username") }}';
+            this.init();
+        }
+
+        init() {
+            this.fetchGameData();
+            this.startEventSource();
+            // Only fetch game data every 30 seconds
+            setInterval(() => this.fetchGameData(), 30000);
+            // Start countdown
+            this.startCountdown();
+        }
+
+        startCountdown() {
+            if (this.countdownInterval) clearInterval(this.countdownInterval);
+
+            this.countdownInterval = setInterval(() => {
+                const display = document.getElementById('countdownDisplay');
+                if (!display) return;
+
+                // If game is live, show LIVE
+                if (this.isGameLive) {
+                    display.textContent = '🔴 LIVE';
+                    display.style.color = '#FF4444';
+                    display.style.animation = 'pulse 0.8s ease-in-out infinite';
+                    return;
+                }
+
+                // Calculate seconds until next game
+                let seconds = 30;
+                if (this.nextGameTime) {
+                    const now = new Date().getTime();
+                    const diff = Math.floor((this.nextGameTime - now) / 1000);
+                    if (diff > 0 && diff <= 30) {
+                        seconds = diff;
+                    } else {
+                        // If diff is negative or > 30, reset to 30
+                        seconds = 30;
+                    }
+                }
+
+                display.textContent = seconds + 's';
+
+                // Flash when close to game start
+                if (seconds <= 5) {
+                    display.style.color = '#FF6B35';
+                    display.style.animation = 'pulse 0.4s ease-in-out infinite';
+                } else if (seconds <= 10) {
+                    display.style.color = '#FFD700';
+                    display.style.animation = 'pulse 0.8s ease-in-out infinite';
+                } else {
+                    display.style.color = 'var(--text-gold)';
+                    display.style.animation = 'none';
+                }
+            }, 1000);
+        }
+
+        startEventSource() {
+            try {
+                if (this.eventSource) {
+                    this.eventSource.close();
+                }
+
+                this.eventSource = new EventSource('/stream');
+                this.eventSource.onmessage = (event) => {
+                    try {
+                        const data = JSON.parse(event.data);
+                        this.handleEvent(data);
+                    } catch (e) {
+                        console.error('Error parsing event:', e);
+                    }
+                };
+
+                this.eventSource.onerror = () => {
+                    console.log('EventSource error, reconnecting...');
+                    this.eventSource.close();
+                    this.reconnectAttempts++;
+                    if (this.reconnectAttempts < this.maxReconnectAttempts) {
+                        setTimeout(() => this.startEventSource(), 5000);
+                    }
+                };
+
+                this.eventSource.onopen = () => {
+                    this.reconnectAttempts = 0;
+                };
+
+            } catch (error) {
+                console.error('EventSource error:', error);
+            }
+        }
+
+        handleEvent(data) {
+            const liveIndicator = document.getElementById('liveIndicator');
+            const statusText = document.getElementById('statusText');
+            const gameStatus = document.getElementById('gameStatusDisplay');
+
+            // UPDATE PLAYER COUNT ON EVERY EVENT (including heartbeats)
+            if (data.queue_count !== undefined) {
+                const playerCountDisplay = document.getElementById('playerCountDisplay');
+                if (playerCountDisplay) {
+                    playerCountDisplay.textContent = data.queue_count;
+                    this.queuedPlayers = data.queue_count;
+                    // Animate change
+                    playerCountDisplay.style.animation = 'bounceIn 0.3s ease-out';
+                    setTimeout(() => {
+                        playerCountDisplay.style.animation = '';
+                    }, 300);
+                }
+            }
+
+            // UPDATE COUNTDOWN ON EVERY EVENT (including heartbeats)
+            if (data.time_remaining !== undefined) {
+                const countdownDisplay = document.getElementById('countdownDisplay');
+                if (countdownDisplay) {
+                    const seconds = data.time_remaining;
+                    countdownDisplay.textContent = seconds + 's';
+                    
+                    // Flash when close to game start
+                    if (seconds <= 5) {
+                        countdownDisplay.style.color = '#FF6B35';
+                        countdownDisplay.style.animation = 'pulse 0.4s ease-in-out infinite';
+                    } else if (seconds <= 10) {
+                        countdownDisplay.style.color = '#FFD700';
+                        countdownDisplay.style.animation = 'pulse 0.8s ease-in-out infinite';
+                    } else {
+                        countdownDisplay.style.color = 'var(--text-gold)';
+                        countdownDisplay.style.animation = 'none';
+                    }
+                }
+            }
+
+            // Handle different event types
+            if (data.event_type === 'game_start') {
+                this.isGameLive = true;
+                if (liveIndicator) liveIndicator.style.display = 'inline-block';
+                if (statusText) {
+                    statusText.textContent = '🔴 LIVE';
+                    statusText.style.color = '#FF4444';
+                }
+                if (gameStatus) {
+                    gameStatus.textContent = '🟢 Game in Progress';
+                    gameStatus.style.color = '#4CAF50';
+                }
+                // Play sound via global soundManager
+                if (window.soundManager) {
+                    window.soundManager.playGameStart();
+                }
+                this.showGameEffect('🚀 GAME STARTED!', '#FFD700');
+
+            } else if (data.event_type === 'game_win' || data.event_type === 'game_end' || data.event_type === 'game_loss') {
+                this.isGameLive = false;
+                if (liveIndicator) liveIndicator.style.display = 'none';
+                if (statusText) {
+                    statusText.textContent = '✅ Completed';
+                    statusText.style.color = '#4CAF50';
+                }
+                if (gameStatus) {
+                    gameStatus.textContent = '✅ Game Ended';
+                    gameStatus.style.color = 'var(--text-muted)';
+                }
+
+                // CHECK IF CURRENT USER IS THE WINNER
+                const isWinner = data.winner && data.winner === this.currentUsername;
+                const winnerAmount = data.winner_amount || 0;
+
+                if (data.event_type === 'game_win' && data.winner && data.winner !== 'N/A') {
+                    // Only show winner notification if current user is the winner
+                    if (isWinner) {
+                        if (winnerAmount >= 5.00) {
+                            if (window.soundManager) {
+                                window.soundManager.playJackpot();
+                            }
+                            this.showGameEffect('🏆 JACKPOT! 🏆', '#FFD700');
+                            this.createConfetti(120);
+                            this.showWinnerNotification(data.winner, winnerAmount, true);
+                        } else {
+                            if (window.soundManager) {
+                                window.soundManager.playWin();
+                            }
+                            this.showGameEffect('🎉 YOU WON! 🎉', '#4CAF50');
+                            this.createConfetti(50);
+                            this.showWinnerNotification(data.winner, winnerAmount, false);
+                        }
+                    } else {
+                        // Non-winner: Show a gentle "someone won" notification
+                        if (window.soundManager) {
+                            window.soundManager.playAlert();
+                        }
+                        this.showGameEffect(`🏆 ${data.winner} WON!`, '#FFD700');
+                        // Small confetti for everyone
+                        this.createConfetti(20);
+                        // Show a smaller notification for non-winners
+                        this.showNonWinnerNotification(data.winner, winnerAmount);
+                    }
+                } else {
+                    if (window.soundManager) {
+                        window.soundManager.playLoss();
+                    }
+                    this.showGameEffect('💪 NO WINNER', '#FF6B35');
+                    this.createShakeEffect();
+                }
+
+                // Refresh results only when game ends
+                setTimeout(() => this.fetchGameData(), 500);
+            }
+
+            // Update game code display
+            if (data.game_code) {
+                const nextGameDisplay = document.getElementById('nextGameDisplay');
+                if (nextGameDisplay) {
+                    if (data.status === 'upcoming') {
+                        nextGameDisplay.textContent = data.game_code + ' (Scheduled)';
+                    } else if (data.status === 'in progress') {
+                        nextGameDisplay.textContent = data.game_code + ' 🔴 LIVE';
+                    } else {
+                        nextGameDisplay.textContent = data.game_code;
+                    }
+                }
+            }
+        }
+
+        showNonWinnerNotification(winner, amount) {
+            const existing = document.getElementById('winnerNotification');
+            if (existing) existing.remove();
+
+            const div = document.createElement('div');
+            div.id = 'winnerNotification';
+            div.style.cssText = `
+                position: fixed; top: 18%; left: 50%; transform: translateX(-50%) translateY(-20px);
+                background: rgba(255,215,0,0.08);
+                padding: 20px 36px;
+                border-radius: 16px;
+                z-index: 9996;
+                text-align: center;
+                border: 2px solid rgba(255,215,0,0.2);
+                box-shadow: 0 0 40px rgba(255,215,0,0.1);
+                backdrop-filter: blur(8px);
+                animation: bounceIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+                min-width: 180px;
+            `;
+            div.innerHTML = `
+                <div style="font-size:2.5rem; margin-bottom:2px;">🏆</div>
+                <div style="font-size:1.2rem; font-weight:700; color:#FFD700; margin:4px 0;">
+                    ${winner} WON!
+                </div>
+                <div style="font-size:1.6rem; font-weight:700; color:#FFD700;">
+                    KES ${Number(amount).toFixed(2)}
+                </div>
+                <div style="font-size:0.8rem; color:var(--text-muted); margin-top:4px;">Better luck next time! 💪</div>
+            `;
+            document.body.appendChild(div);
+
+            setTimeout(() => {
+                div.style.transition = 'all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1)';
+                div.style.opacity = '0';
+                div.style.transform = 'translateX(-50%) translateY(-60px) scale(0.9)';
+                setTimeout(() => div.remove(), 800);
+            }, 4000);
+        }
+
+        showGameEffect(message, color) {
+            const existing = document.getElementById('gameEffect');
+            if (existing) existing.remove();
+
+            const div = document.createElement('div');
+            div.id = 'gameEffect';
+            div.style.cssText = `
+                position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0);
+                background: rgba(0,0,0,0.92); color: ${color}; padding: 28px 50px;
+                border-radius: 24px; z-index: 9997; text-align: center;
+                border: 3px solid ${color}; font-size: 2rem; font-weight: 700;
+                box-shadow: 0 0 80px ${color}44, inset 0 0 40px ${color}22;
+                pointer-events: none; transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+                backdrop-filter: blur(8px);
+                text-shadow: 0 0 30px ${color}33;
+                min-width: 180px;
+                letter-spacing: 1px;
+            `;
+            div.textContent = message;
+            document.body.appendChild(div);
+
+            requestAnimationFrame(() => {
+                div.style.transform = 'translate(-50%, -50%) scale(1)';
+            });
+
+            setTimeout(() => {
+                div.style.transform = 'translate(-50%, -50%) scale(1.2)';
+                div.style.opacity = '0';
+                setTimeout(() => div.remove(), 500);
+            }, 1800);
+        }
+
+        showWinnerNotification(winner, amount, isJackpot) {
+            const existing = document.getElementById('winnerNotification');
+            if (existing) existing.remove();
+
+            const div = document.createElement('div');
+            div.id = 'winnerNotification';
+            div.style.cssText = `
+                position: fixed; top: 18%; left: 50%; transform: translateX(-50%) translateY(-20px);
+                background: ${isJackpot ? 'linear-gradient(135deg, rgba(255,107,53,0.2), rgba(255,215,0,0.1))' : 'linear-gradient(135deg, rgba(255,215,0,0.15), rgba(255,215,0,0.05))'};
+                padding: 24px 44px; border-radius: 20px; z-index: 9996;
+                text-align: center; border: ${isJackpot ? '3px solid #FF6B35' : '2px solid #FFD700'};
+                box-shadow: 0 0 60px ${isJackpot ? 'rgba(255,107,53,0.3)' : 'rgba(255,215,0,0.2)'};
+                backdrop-filter: blur(12px);
+                animation: bounceIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+                min-width: 200px;
+                ${isJackpot ? 'animation: glow 1s ease-in-out infinite, bounceIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;' : ''}
+            `;
+            div.innerHTML = `
+                <div style="font-size:${isJackpot ? '3.5rem' : '2.8rem'}; margin-bottom:4px;">${isJackpot ? '🏆' : '🎉'}</div>
+                <div style="font-size:1.4rem; font-weight:700; color:#FFD700; margin:6px 0;">
+                    ${winner} ${isJackpot ? 'HIT JACKPOT!' : 'WON!'}
+                </div>
+                <div style="font-size:${isJackpot ? '3rem' : '2.2rem'}; font-weight:800; color:${isJackpot ? '#FF6B35' : '#FFD700'};">
+                    KES ${Number(amount).toFixed(2)}
+                </div>
+                ${isJackpot ? '<div style="font-size:0.9rem; color:#FF6B35; margin-top:4px; animation: pulse 0.8s ease-in-out infinite;">🌟 MEGA WIN! 🌟</div>' : ''}
+            `;
+            document.body.appendChild(div);
+
+            setTimeout(() => {
+                div.style.transition = 'all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1)';
+                div.style.opacity = '0';
+                div.style.transform = 'translateX(-50%) translateY(-60px) scale(0.9)';
+                setTimeout(() => div.remove(), 800);
+            }, 4500);
+        }
+
+        createConfetti(count) {
+            count = count || 50;
+            const colors = ['#FFD700', '#FF6B35', '#4CAF50', '#2196F3', '#FF4081', '#AB47BC', '#FF5722', '#00BCD4'];
+            const container = document.createElement('div');
+            container.style.cssText = `
+                position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+                pointer-events: none; z-index: 9995; overflow: hidden;
+            `;
+            document.body.appendChild(container);
+
+            for (let i = 0; i < count; i++) {
+                const c = document.createElement('div');
+                const color = colors[Math.floor(Math.random() * colors.length)];
+                const size = Math.random() * 10 + 4;
+                const startX = Math.random() * window.innerWidth;
+                const duration = Math.random() * 2.5 + 1.5;
+                const delay = Math.random() * 0.6;
+                const rotation = Math.random() * 720;
+                const wobble = Math.random() * 80 - 40;
+
+                c.style.cssText = `
+                    position: absolute; left: ${startX}px; top: -20px;
+                    width: ${size}px; height: ${size * 0.6}px;
+                    background: ${color};
+                    transform: rotate(0deg);
+                    animation: confettiFall ${duration}s cubic-bezier(0.25, 0.46, 0.45, 0.94) ${delay}s forwards;
+                    border-radius: ${Math.random() > 0.5 ? '50%' : '2px'};
+                    box-shadow: 0 2px 8px ${color}44;
+                    --wobble: ${wobble}px;
+                    --rot: ${rotation}deg;
+                `;
+                container.appendChild(c);
+            }
+
+            if (!document.getElementById('confetti-style-main')) {
+                const style = document.createElement('style');
+                style.id = 'confetti-style-main';
+                style.textContent = `
+                    @keyframes confettiFall {
+                        0% { transform: translateY(0) rotate(0deg) scale(0.8); opacity: 0; }
+                        10% { opacity: 1; transform: translateY(20px) rotate(var(--rot)) scale(1); }
+                        100% { transform: translateY(${window.innerHeight + 100}px) rotate(calc(var(--rot) * 2)) scale(0.3); opacity: 0; }
+                    }
+                `;
+                document.head.appendChild(style);
+            }
+
+            setTimeout(() => container.remove(), 4000);
+        }
+
+        createShakeEffect() {
+            const target = document.querySelector('.game-window') || document.querySelector('.card');
+            if (target) {
+                target.style.animation = 'shakeEffect 0.5s ease-in-out';
+                setTimeout(() => {
+                    target.style.animation = '';
+                }, 500);
+            }
+        }
+
+        async fetchGameData() {
+            try {
+                const response = await fetch('/game_data');
+                if (!response.ok) throw new Error('Network error');
+                const data = await response.json();
+                this.updateDisplay(data);
+
+                // Update results only if new data available
+                if (data.completed_games && data.completed_games.length > 0) {
+                    const newGames = data.completed_games;
+                    if (this.gameResultsCache.length === 0 ||
+                        this.gameResultsCache[0].game_code !== newGames[0].game_code) {
+                        this.gameResultsCache = newGames;
+                        this.updateResults(newGames);
+                    }
+                }
+            } catch (error) {
+                console.error('Error fetching game data:', error);
+            }
+        }
+
+        updateDisplay(data) {
+            // Update next game time for countdown
+            if (data.upcoming_game && data.upcoming_game.timestamp && data.upcoming_game.timestamp !== 'N/A') {
+                try {
+                    this.nextGameTime = new Date(data.upcoming_game.timestamp).getTime();
+                } catch (e) {
+                    // If timestamp parsing fails, use 30 seconds from now
+                    this.nextGameTime = new Date().getTime() + 30000;
+                }
+            } else {
+                // If no upcoming game, set to 30 seconds from now
+                this.nextGameTime = new Date().getTime() + 30000;
+            }
+
+            // Update next game display
+            const nextGameDisplay = document.getElementById('nextGameDisplay');
+            if (nextGameDisplay && data.upcoming_game) {
+                if (data.upcoming_game.game_code && data.upcoming_game.game_code !== 'N/A') {
+                    const status = data.upcoming_game.status || 'upcoming';
+                    if (status === 'in progress') {
+                        nextGameDisplay.textContent = data.upcoming_game.game_code + ' 🔴 LIVE';
+                    } else {
+                        nextGameDisplay.textContent = data.upcoming_game.game_code + ' (Scheduled)';
+                    }
+                } else {
+                    nextGameDisplay.textContent = 'No game scheduled';
+                }
+            }
+
+            // Update player count from real queue
+            const playerCountDisplay = document.getElementById('playerCountDisplay');
+            if (playerCountDisplay) {
+                const count = data.queued_players || 0;
+                playerCountDisplay.textContent = count;
+                this.queuedPlayers = count;
+                // Animate player count change
+                if (count > 0) {
+                    playerCountDisplay.style.animation = 'bounceIn 0.3s ease-out';
+                    setTimeout(() => {
+                        playerCountDisplay.style.animation = '';
+                    }, 300);
+                }
+            }
+
+            // Update game status
+            const gameStatus = document.getElementById('gameStatusDisplay');
+            if (gameStatus && data.upcoming_game) {
+                const status = data.upcoming_game.status || 'unknown';
+                if (status === 'in progress') {
+                    gameStatus.textContent = '🟢 Live';
+                    gameStatus.style.color = '#4CAF50';
+                    this.isGameLive = true;
+                } else if (status === 'upcoming') {
+                    gameStatus.textContent = '⏳ Waiting for players';
+                    gameStatus.style.color = 'var(--text-gold)';
+                    this.isGameLive = false;
+                } else {
+                    gameStatus.textContent = '⏸️ Idle';
+                    gameStatus.style.color = 'var(--text-muted)';
+                    this.isGameLive = false;
+                }
+            }
+
+            // Update live indicator
+            const liveIndicator = document.getElementById('liveIndicator');
+            if (liveIndicator) {
+                if (this.isGameLive) {
+                    liveIndicator.style.display = 'inline-block';
+                } else {
+                    liveIndicator.style.display = 'none';
+                }
+            }
+
+            // Update play button state based on queue
+            const playButton = document.getElementById('playButton');
+            if (playButton) {
+                if (data.current_user_queued) {
+                    playButton.innerHTML = '✅ ENROLLED!';
+                    playButton.disabled = true;
+                    playButton.style.background = 'linear-gradient(135deg, #00C9B1, #00A896)';
+                    playButton.style.boxShadow = '0 4px 20px rgba(0,201,177,0.3)';
+                } else {
+                    playButton.innerHTML = '🎮 PLAY NOW';
+                    playButton.disabled = false;
+                    playButton.style.background = 'linear-gradient(135deg, #D4AF37, #FFD700)';
+                    playButton.style.boxShadow = '0 4px 20px rgba(212,175,55,0.3)';
+                    playButton.style.animation = 'pulse 2s ease-in-out infinite';
+                    setTimeout(() => {
+                        playButton.style.animation = '';
+                    }, 2000);
+                }
+            }
+        }
+
+        updateResults(games) {
+            const resultsContainer = document.getElementById('gameResults');
+            const resultCount = document.getElementById('resultCount');
+
+            if (resultsContainer && games) {
+                if (games.length > 0) {
+                    let html = '';
+                    games.forEach((game, index) => {
+                        let resultClass = 'game-result';
+                        let isWin = false;
+                        let isJackpot = false;
+
+                        if (game.winner && game.winner !== 'N/A') {
+                            isWin = true;
+                            const amount = parseFloat(game.winner_amount.replace('Ksh. ', '').replace(',', ''));
+                            if (amount >= 5.00) {
+                                isJackpot = true;
+                                resultClass += ' result-jackpot';
+                            } else {
+                                resultClass += ' result-win';
+                            }
+                        } else {
+                            resultClass += ' result-loss';
+                        }
+
+                        const delay = Math.min(index * 0.04, 0.6);
+                        html += `
+                            <div class="${resultClass}" style="animation: fadeInUp ${0.3 + delay}s ease-out forwards;">
+                                <div style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:6px; align-items:center;">
+                                    <span style="font-weight:600; color:var(--text-gold);">🎯 ${game.game_code}</span>
+                                    <span style="color:var(--text-muted); font-size:0.8rem;">🕒 ${game.timestamp}</span>
+                                    <span style="color:var(--text-muted); font-size:0.8rem;">👥 ${game.num_users}</span>
+                                    <span style="color:var(--text-muted); font-size:0.8rem;">💰 ${game.total_amount}</span>
+                                    <span class="winner">🏆 ${game.winner || 'N/A'}</span>
+                                    <span class="amount">🎁 ${game.winner_amount}</span>
+                                </div>
+                                ${isWin ? '<div style="color:#FFD700; font-size:0.85rem; margin-top:4px;">🏆 WINNER!</div>' : ''}
+                                ${isJackpot ? '<div style="color:#FF6B35; font-size:1rem; font-weight:700; margin-top:4px; animation: glow 1s ease-in-out infinite;">🎰 JACKPOT!</div>' : ''}
+                            </div>
+                        `;
+                    });
+                    resultsContainer.innerHTML = html;
+                    if (resultCount) {
+                        resultCount.textContent = `Showing ${games.length} games`;
+                    }
+                    this.resultsInitialized = true;
+                } else {
+                    resultsContainer.innerHTML = '<div style="text-align:center; color:var(--text-muted); padding:30px; font-size:1.05rem;">🎮 No games played yet. Be the first!</div>';
+                    if (resultCount) {
+                        resultCount.textContent = 'No games yet';
+                    }
+                }
+            }
+        }
+    }
+
+    // ============================================================
+    // ENQUEUE PLAYER
+    // ============================================================
+    window.enqueuePlayer = async function() {
+        const playButton = document.getElementById('playButton');
+        if (!playButton || playButton.disabled) return;
+
+        playButton.innerHTML = '⏳ ENROLLING...';
+        playButton.disabled = true;
+        playButton.style.background = 'linear-gradient(135deg, #666, #888)';
+
+        try {
+            const response = await fetch('/play', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': document.querySelector('input[name="csrf_token"]')?.value || ''
+                }
+            });
+            const data = await response.json();
+
+            if (data.success) {
+                playButton.innerHTML = '✅ ENROLLED!';
+                playButton.style.background = 'linear-gradient(135deg, #00C9B1, #00A896)';
+                playButton.style.boxShadow = '0 4px 20px rgba(0,201,177,0.3)';
+                if (window.soundManager) {
+                    window.soundManager.playClick();
+                }
+                // Show success notification
+                const notification = document.createElement('div');
+                notification.style.cssText = `
+                    position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px);
+                    background: rgba(0,201,177,0.15); padding: 16px 32px; border-radius: 14px;
+                    border: 1px solid #00C9B1; color: #00C9B1; font-weight: 600;
+                    box-shadow: 0 8px 40px rgba(0,201,177,0.15);
+                    backdrop-filter: blur(10px);
+                    z-index: 9999;
+                    transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+                    text-align: center;
+                `;
+                notification.textContent = '✅ ' + data.message;
+                document.body.appendChild(notification);
+                requestAnimationFrame(() => {
+                    notification.style.transform = 'translateX(-50%) translateY(0)';
+                });
+                setTimeout(() => {
+                    notification.style.transform = 'translateX(-50%) translateY(100px)';
+                    notification.style.opacity = '0';
+                    setTimeout(() => notification.remove(), 500);
+                }, 3000);
+
+                // Refresh game data to update queue status
+                if (window.gameUpdater) {
+                    setTimeout(() => window.gameUpdater.fetchGameData(), 500);
+                }
+            } else {
+                playButton.innerHTML = '🎮 PLAY NOW';
+                playButton.disabled = false;
+                playButton.style.background = 'linear-gradient(135deg, #D4AF37, #FFD700)';
+                playButton.style.boxShadow = '0 4px 20px rgba(212,175,55,0.3)';
+                if (window.soundManager) {
+                    window.soundManager.playAlert();
+                }
+                alert(data.error || 'Failed to enroll. Please try again.');
+            }
+        } catch (error) {
+            console.error('Error enrolling:', error);
+            playButton.innerHTML = '🎮 PLAY NOW';
+            playButton.disabled = false;
+            playButton.style.background = 'linear-gradient(135deg, #D4AF37, #FFD700)';
+            playButton.style.boxShadow = '0 4px 20px rgba(212,175,55,0.3)';
+            alert('Network error. Please check your connection.');
+        }
+    };
+
+    // ============================================================
+    // INITIALIZE
+    // ============================================================
+    document.addEventListener('DOMContentLoaded', function() {
+        {% if session.get('user_id') %}
+            const updater = new GameStatusUpdater();
+            window.gameUpdater = updater;
+        {% endif %}
+    });
+</script>
+{% endblock %}

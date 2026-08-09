@@ -1,0 +1,134 @@
+{% extends "admin/base_admin.html" %}
+
+{% block title %}Withdrawal Management - HARAMBEE CASH{% endblock %}
+
+{% block content %}
+<div class="main-content">
+    <div class="tab-content active" style="display:block;">
+        <h2 style="color: var(--accent-gold); margin-bottom: 20px;">
+            <i class="fas fa-money-check-alt"></i> Withdrawal Management
+            <span class="status-badge status-pending" style="margin-left: 12px;">{{ pending_count|default(0) }} Pending</span>
+        </h2>
+
+        <!-- Hidden CSRF token for JavaScript to access -->
+        <input type="hidden" id="csrf_token" name="csrf_token" value="{{ csrf_token() }}">
+
+        <div style="overflow-x: auto;">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Receipt Code</th>
+                        <th>User</th>
+                        <th>Requested</th>
+                        <th>Fee</th>
+                        <th>Net Amount</th>
+                        <th>Status</th>
+                        <th>Request Time</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for w in withdrawals %}
+                    <tr>
+                        <td><code>{{ w.receipt_code }}</code></td>
+                        <td><strong>{{ w.username }}</strong></td>
+                        <td>KES {{ "%.2f"|format(w.requested_amount|default(0)) }}</td>
+                        <td>KES {{ "%.2f"|format(w.withdrawal_fee|default(0)) }}</td>
+                        <td><strong>KES {{ "%.2f"|format(w.net_amount|default(0)) }}</strong></td>
+                        <td>
+                            {% if w.status == 'pending' %}
+                            <span class="status-badge status-pending">PENDING</span>
+                            {% elif w.status == 'approved' %}
+                            <span class="status-badge status-active">APPROVED</span>
+                            {% elif w.status == 'completed' %}
+                            <span class="status-badge status-active">COMPLETED</span>
+                            {% elif w.status == 'rejected' %}
+                            <span class="status-badge status-suspended">REJECTED</span>
+                            {% else %}
+                            <span class="status-badge status-suspended">{{ w.status|upper }}</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ w.request_time.strftime('%Y-%m-%d %H:%M') if w.request_time else 'N/A' }}</td>
+                        <td>
+                            {% if w.status == 'pending' %}
+                            <button class="btn btn-primary" style="background: #4CAF50; padding: 5px 10px; font-size: 0.8rem;" onclick="processWithdrawal({{ w.id }}, 'approve')">
+                                <i class="fas fa-check"></i> Approve
+                            </button>
+                            <button class="btn btn-primary" style="background: #f44336; padding: 5px 10px; font-size: 0.8rem;" onclick="processWithdrawal({{ w.id }}, 'reject')">
+                                <i class="fas fa-times"></i> Reject
+                            </button>
+                            {% else %}
+                            <button class="btn" disabled style="background: #666; padding: 5px 10px; font-size: 0.8rem;">Processed</button>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div style="margin-top: 20px; text-align: center;">
+            <a href="{{ url_for('admin.dashboard') }}" class="btn btn-primary">← Back to Dashboard</a>
+        </div>
+    </div>
+</div>
+
+<script>
+function processWithdrawal(withdrawalId, action) {
+    // Get CSRF token from the hidden input field
+    const csrfToken = document.getElementById('csrf_token')?.value || '';
+
+    if (!csrfToken) {
+        alert('❌ CSRF token missing. Please refresh the page and try again.');
+        return;
+    }
+
+    const adminNotes = prompt('Enter admin notes (optional):') || '';
+
+    // Show processing status
+    const buttons = document.querySelectorAll(`button[onclick*="${withdrawalId}"]`);
+    buttons.forEach(btn => {
+        btn.disabled = true;
+        btn.textContent = '⏳ Processing...';
+    });
+
+    fetch('/admin/process_withdrawal', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: `withdrawal_id=${withdrawalId}&action=${action}&admin_notes=${encodeURIComponent(adminNotes)}&csrf_token=${encodeURIComponent(csrfToken)}`
+    })
+    .then(response => {
+        if (!response.ok) {
+            return response.text().then(text => {
+                throw new Error(`Server returned ${response.status}: ${text.substring(0, 100)}`);
+            });
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.success) {
+            alert('✅ Withdrawal ' + action + 'ed successfully!');
+            location.reload();
+        } else {
+            alert('❌ Error: ' + (data.error || 'Unknown error occurred'));
+            // Re-enable buttons
+            buttons.forEach(btn => {
+                btn.disabled = false;
+                btn.textContent = action === 'approve' ? 'Approve' : 'Reject';
+            });
+        }
+    })
+    .catch(error => {
+        alert('❌ System error: ' + error.message);
+        console.error('Error:', error);
+        // Re-enable buttons
+        buttons.forEach(btn => {
+            btn.disabled = false;
+            btn.textContent = action === 'approve' ? 'Approve' : 'Reject';
+        });
+    });
+}
+</script>
+{% endblock %}

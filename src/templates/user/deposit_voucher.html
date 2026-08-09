@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block title %}Deposit Voucher - HARAMBEE CASH{% endblock %}
+
+{% block content %}
+<div class="card" style="max-width: 400px; margin: 0 auto; text-align: center;">
+    <div style="border-bottom: 2px dashed var(--gold-primary); padding-bottom: 16px; margin-bottom: 16px;">
+        <h1 style="color: var(--gold-primary);">HARAMBEE CASH</h1>
+        <p>Deposit Voucher</p>
+        <div style="background: var(--dark-surface); padding: 8px 16px; border-radius: 8px; font-family: monospace; font-size: 1.1rem;">
+            {{ deposit.voucher_code }}
+        </div>
+    </div>
+    
+    <div style="text-align: left; margin-bottom: 20px;">
+        <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.1);">
+            <span>Username:</span>
+            <strong>{{ deposit.username }}</strong>
+        </div>
+        <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.1);">
+            <span>Date:</span>
+            <strong>{{ deposit.request_time.strftime('%Y-%m-%d') if deposit.request_time else 'N/A' }}</strong>
+        </div>
+        <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.1);">
+            <span>Status:</span>
+            <strong style="color: var(--warning);">{{ deposit.status.upper() }}</strong>
+        </div>
+    </div>
+    
+    <div style="background: linear-gradient(135deg, var(--info), #1976D2); padding: 16px; border-radius: 12px; margin-bottom: 20px;">
+        <div>Deposit Amount</div>
+        <div style="font-size: 1.5rem; font-weight: 700;">KES {{ "%.2f"|format(deposit.amount) }}</div>
+    </div>
+    
+    <div style="background: rgba(255,193,7,0.1); padding: 12px; border-radius: 8px; margin-bottom: 20px; text-align: left;">
+        <strong>📋 PRESENT TO ADMIN:</strong><br>
+        "Kindly update my platform wallet account with the M-Pesa amount sent to your platform recently!"
+    </div>
+    
+    <div style="display: flex; gap: 12px; justify-content: center;">
+        <button onclick="window.print()" class="btn btn-primary">
+            <i class="fas fa-print"></i> Print
+        </button>
+        <a href="{{ url_for('game.index') }}" class="btn btn-success">
+            <i class="fas fa-home"></i> Home
+        </a>
+    </div>
+</div>
+{% endblock %}

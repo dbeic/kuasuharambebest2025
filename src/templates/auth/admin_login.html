@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login - HARAMBEE CASH</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-dark: #1a1a2e;
+            --secondary-dark: #16213e;
+            --accent-gold: #ffcc00;
+            --accent-gold-light: #ffd700;
+            --success-green: #4CAF50;
+            --warning-orange: #FF9800;
+            --error-red: #f44336;
+            --info-blue: #2196F3;
+            --purple: #9C27B0;
+            --teal: #009688;
+            --text-light: #FFFFFF;
+            --text-muted: #CCCCCC;
+            --card-bg: rgba(0, 0, 0, 0.7);
+            --card-bg-light: rgba(255, 255, 255, 0.05);
+            --border-radius: 12px;
+            --shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --gradient-primary: linear-gradient(135deg, #43cea2, #185a9d);
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Segoe UI', 'Roboto', 'Arial', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: var(--gradient-primary);
+            color: var(--text-light);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .admin-login-container {
+            width: 100%;
+            max-width: 420px;
+            margin: 0 auto;
+        }
+        
+        .admin-login-card {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 40px 35px;
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(255, 204, 0, 0.15);
+        }
+        
+        .admin-login-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .admin-login-header .shield-icon {
+            font-size: 3rem;
+            color: var(--accent-gold);
+            margin-bottom: 10px;
+        }
+        
+        .admin-login-header h2 {
+            color: var(--accent-gold);
+            font-size: 1.8rem;
+            margin: 0;
+        }
+        
+        .admin-login-header p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+        
+        .alert {
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+        }
+        
+        .alert-error {
+            background: rgba(244, 67, 54, 0.2);
+            border-left: 4px solid var(--error-red);
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 12px 15px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            border-radius: 8px;
+            color: white;
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--accent-gold);
+            background: rgba(255, 255, 255, 0.12);
+        }
+        
+        .btn-login {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, var(--accent-gold), var(--accent-gold-light));
+            border: none;
+            border-radius: 8px;
+            color: var(--primary-dark);
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255, 204, 0, 0.3);
+        }
+        
+        .admin-login-footer {
+            text-align: center;
+            margin-top: 20px;
+        }
+        
+        .admin-login-footer a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: var(--transition);
+        }
+        
+        .admin-login-footer a:hover {
+            color: var(--accent-gold);
+        }
+        
+        .admin-login-footer .back-home {
+            display: inline-block;
+            margin-top: 10px;
+        }
+        
+        .admin-login-footer .back-home i {
+            margin-right: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-login-container">
+        <div class="admin-login-card">
+            <div class="admin-login-header">
+                <div class="shield-icon"><i class="fas fa-user-shield"></i></div>
+                <h2>Admin Login</h2>
+                <p>Secure access to the administration panel</p>
+            </div>
+            
+            {% if error %}
+            <div class="alert alert-error">
+                <i class="fas fa-exclamation-circle"></i> {{ error }}
+            </div>
+            {% endif %}
+            
+            <form method="POST" action="{{ url_for('auth.admin_login') }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                
+                <div class="form-group">
+                    <label><i class="fas fa-user"></i> Admin Username</label>
+                    <input type="text" name="username" placeholder="Enter admin username" required autofocus>
+                </div>
+                
+                <div class="form-group">
+                    <label><i class="fas fa-lock"></i> Password</label>
+                    <input type="password" name="password" placeholder="Enter your password" required>
+                </div>
+                
+                <button type="submit" class="btn-login">
+                    <i class="fas fa-sign-in-alt"></i> Login as Admin
+                </button>
+            </form>
+            
+            <div class="admin-login-footer">
+                <a href="{{ url_for('game.index') }}" class="back-home">
+                    <i class="fas fa-arrow-left"></i> Back to Home
+                </a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

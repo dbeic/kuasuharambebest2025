@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+
+{% block title %}Documentation - HARAMBEE CASH{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h1 style="color: var(--text-gold); text-align: center;">Harambee Cash Documentation</h1>
+
+    <h3 style="color: var(--text-gold); margin-top: 24px;">Overview</h3>
+    <p>Harambee Cash is a web-based gaming platform where users participate in periodic games with random winner selection. The platform features user registration, wallet management, game participation, and administrative controls.</p>
+
+    <h3 style="color: var(--text-gold); margin-top: 24px;">Current System Specifications</h3>
+    <ul>
+        <li><strong>Minimum Stake:</strong> Ksh. 10.00 per game entry</li>
+        <li><strong>Minimum Players:</strong> 2 players required to start a game</li>
+        <li><strong>Game Interval:</strong> 30 seconds per game cycle</li>
+        <li><strong>Platform Fee:</strong> 10% deducted from the total prize pool</li>
+        <li><strong>Winner Share:</strong> 90% of the prize pool awarded to the winner</li>
+        <li><strong>Queue Management:</strong> Players queue until 2 + unlimited are accumulated, then game executes</li>
+        <li><strong>Rescheduling:</strong> Games reschedule every 30 seconds until the 2 + -player threshold is met</li>
+        <li><strong>Withdrawal Eligibility:</strong> Only winnings from games are eligible for withdrawal</li>
+        <li><strong>Minimum Withdrawal:</strong> Ksh. 100.00</li>
+        <li><strong>Minimum Deposit:</strong> Ksh. 50.00</li>
+        <li><strong>Loan System:</strong> New users receive a KES 200.00 welcome loan. Automatic repayment of KES 100.00 occurs when win earnings reach KES 100.00.</li>
+    </ul>
+
+    <h3 style="color: var(--text-gold); margin-top: 24px;">Key Features</h3>
+    <ul>
+        <li><strong>User Registration & Login:</strong> Secure registration with email, username, and password.</li>
+        <li><strong>Wallet Management:</strong> Users can view balances; admins can process deposits and withdrawals.</li>
+        <li><strong>Loan Management:</strong> Automatic loan creation, repayment tracking, and withdrawal eligibility based on loan status.</li>
+        <li><strong>Game Logic:</strong> 30-second game cycles with random winner selection from queued players.</li>
+        <li><strong>Admin Dashboard:</strong> Comprehensive admin controls for user management and financial oversight.</li>
+        <li><strong>Transaction History:</strong> Complete audit trail of all financial transactions.</li>
+        <li><strong>Real-time Updates:</strong> Live game status and queue information.</li>
+    </ul>
+
+    <h3 style="color: var(--text-gold); margin-top: 24px;">How to Play</h3>
+    <ol>
+        <li><strong>Register:</strong> Create an account with your email and username.</li>
+        <li><strong>Deposit:</strong> Fund your wallet with a minimum of Ksh. 50.00.</li>
+        <li><strong>Join Game:</strong> Click the Play button to join the queue with a Ksh. 10.00 stake.</li>
+        <li><strong>Wait for Players:</strong> The game waits until 2 + players are in the queue.</li>
+        <li><strong>Game Execution:</strong> When 2 + players accumulate, the game runs and a winner is selected.</li>
+        <li><strong>Win:</strong> The winner receives 90% of the prize pool in their wallet.</li>
+        <li><strong>Withdraw:</strong> You can withdraw your winnings (minimum Ksh. 100.00).</li>
+        <li><strong>Loan Repayment:</strong> Your winnings automatically repay your welcome loan of KES 200.00 when you reach KES 100.00 in win earnings.</li>
+    </ol>
+
+    <h3 style="color: var(--text-gold); margin-top: 24px;">Loan System Details</h3>
+    <ul>
+        <li><strong>Loan Creation:</strong> Every new user receives an automatic welcome loan of KES 200.00 upon registration.</li>
+        <li><strong>Loan Repayment:</strong> When your win earnings reach KES 100.00, a repayment of KES 100.00 is automatically triggered.</li>
+        <li><strong>Repayment Process:</strong> The repayment is deducted from your win earnings and applied to your loan balance.</li>
+        <li><strong>Loan Completion:</strong> Your loan is considered fully repaid when your remaining balance reaches KES 0.00.</li>
+        <li><strong>Withdrawal Requirement:</strong> You must have fully repaid your loan before you can request any withdrawals.</li>
+        <li><strong>Loan Tracking:</strong> Your loan status is updated in real-time and visible in your account dashboard.</li>
+        <li><strong>Multiple Repayments:</strong> Multiple KES 100.00 repayments may be processed until the loan is fully repaid.</li>
+        <li><strong>House Account:</strong> All loan repayments are deposited into the platform's house account to support operations.</li>
+    </ul>
+
+    <h3 style="color: var(--text-gold); margin-top: 24px;">Administrative Features</h3>
+    <ul>
+        <li>User account management (suspend, activate, delete)</li>
+        <li>Deposit request processing and approval</li>
+        <li>Withdrawal request processing and approval</li>
+        <li>Game history and statistics viewing</li>
+        <li>Financial reconciliation and reporting</li>
+        <li>User activity and visitor logs</li>
+        <li>System configuration management</li>
+    </ul>
+
+    <h3 style="color: var(--text-gold); margin-top: 24px;">Security Features</h3>
+    <ul>
+        <li>Password hashing with bcrypt</li>
+        <li>CSRF protection for forms</li>
+        <li>Rate limiting to prevent abuse</li>
+        <li>Session management with timeout</li>
+        <li>Audit logging of all financial transactions</li>
+        <li>Database connection pooling for reliability</li>
+        <li>Secure cookie handling</li>
+        <li>Loan system tracking and audit logging for all loan transactions</li>
+    </ul>
+
+    <h3 style="color: var(--text-gold); margin-top: 24px;">Future Enhancements</h3>
+    <ul>
+        <li>API integration for third-party developers</li>
+        <li>Expanded employment opportunities through platform growth</li>
+        <li>Periodic rewards for highly active users</li>
+        <li>Email verification during registration</li>
+        <li>Two-factor authentication (2FA) for admins</li>
+        <li>Complete mobile money integration (M-Pesa, Airtel Money)</li>
+        <li>Referral system with bonuses</li>
+        <li>In-app real-time notifications</li>
+        <li>Leaderboards and achievement badges</li>
+        <li>Native mobile applications (iOS and Android)</li>
+        <li>Real-time support chatbot integration</li>
+        <li>Downloadable transaction receipts</li>
+        <li>Multi-language support for international users</li>
+        <li>Advanced analytics and reporting dashboard</li>
+        <li>Variable loan amounts based on user activity and history</li>
+    </ul>
+
+    <h3 style="color: var(--text-gold); margin-top: 24px;">Compliance</h3>
+    <ul>
+        <li><strong>Data Protection:</strong> Fully compliant with the Kenya Data Protection Act, 2019</li>
+        <li><strong>Financial Compliance:</strong> All transactions are recorded and auditable</li>
+        <li><strong>Age Verification:</strong> Users must be 18 years or older</li>
+        <li><strong>Fair Play:</strong> Random winner selection algorithm ensures fairness</li>
+        <li><strong>Anti-Money Laundering:</strong> Compliance with AML regulations through transaction monitoring</li>
+        <li><strong>Loan Compliance:</strong> Loan operations comply with Kenyan financial regulations and are subject to audit</li>
+    </ul>
+
+    <div style="text-align: center; margin-top: 32px;">
+        <a href="{{ url_for('game.index') }}" class="btn btn-primary">← Back to Home</a>
+    </div>
+</div>
+{% endblock %}
